@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Toast Studio — Ստեղծիր քո իդեալական տոստը</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #fff5f8;
+      --bg-card: #ffffff;
+      --pink-50: #fff0f5;
+      --pink-100: #ffe0eb;
+      --pink-200: #ffc2d9;
+      --pink-300: #ff94bd;
+      --pink-400: #ff5c9d;
+      --pink-500: #ff2e82;
+      --pink-600: #e01b6c;
+      --text-dark: #3b1d2a;
+      --text-muted: #8c6273;
+      --shadow-soft: 0 12px 32px rgba(255, 46, 130, 0.12);
+      --shadow-card: 0 6px 20px rgba(59, 29, 42, 0.05);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans Armenian', sans-serif;
+      background: radial-gradient(circle at top left, #ffe6f0 0%, #fff7fa 45%, #ffeef4 100%);
+      color: var(--text-dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Նուրբ լողացող դեկորատիվ շրջանակներ */
+    .bg-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(60px);
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .blob-1 { width: 360px; height: 360px; background: #ffc2d9; top: -80px; right: -60px; }
+    .blob-2 { width: 320px; height: 320px; background: #ffd6e6; bottom: -60px; left: -60px; }
+
+    header {
+      position: relative;
+      z-index: 10;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 20px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--pink-400), var(--pink-500));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      box-shadow: 0 8px 20px rgba(255, 46, 130, 0.28);
+    }
+
+    .brand h1 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      color: var(--text-dark);
+    }
+
+    .brand span {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 11px 20px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--text-dark);
+      border: 1.5px solid var(--pink-200);
+    }
+    .btn-ghost:hover {
+      background: var(--pink-50);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--pink-400), var(--pink-500));
+      color: #ffffff;
+      box-shadow: 0 8px 22px rgba(255, 46, 130, 0.32);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 12px 26px rgba(255, 46, 130, 0.42);
+    }
+
+    /* Հիմնական դասավորություն */
+    .studio-layout {
+      position: relative;
+      z-index: 10;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 10px 28px 50px;
+      display: grid;
+      grid-template-columns: 440px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .studio-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Ձախ վահանակ՝ Ափսե և Տոստի նախադիտում */
+    .preview-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      border: 2px solid #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      box-shadow: var(--shadow-soft);
+      position: sticky;
+      top: 20px;
+      text-align: center;
+    }
+
+    .chef-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--pink-50);
+      border: 1px solid var(--pink-200);
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--pink-600);
+      margin-bottom: 18px;
+      transition: all 0.3s ease;
+    }
+
+    .plate-stage {
+      position: relative;
+      width: 340px;
+      height: 340px;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Հարթ կերամիկական ափսե */
+    .plate {
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #ffffff 0%, #fff6f9 68%, #ffdce9 100%);
+      box-shadow:
+        0 20px 40px rgba(224, 27, 108, 0.14),
+        inset 0 4px 12px rgba(255, 255, 255, 0.95),
+        inset 0 -8px 20px rgba(255, 182, 211, 0.45);
+      border: 6px solid #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .plate-inner-ring {
+      width: 245px;
+      height: 245px;
+      border-radius: 50%;
+      border: 2px dashed var(--pink-200);
+      opacity: 0.8;
+    }
+
+    #toast-canvas {
+      position: relative;
+      width: 240px;
+      height: 240px;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bread-layer {
+      position: absolute;
+      width: 215px;
+      height: 215px;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      filter: drop-shadow(0 12px 18px rgba(59, 29, 42, 0.16));
+    }
+
+    .topping-layer {
+      position: absolute;
+      width: 66px;
+      height: 66px;
+      pointer-events: none;
+      animation: popIn 0.36s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      filter: drop-shadow(0 5px 8px rgba(59, 29, 42, 0.18));
+    }
+
+    @keyframes popIn {
+      0% { transform: translate(-50%, -50%) scale(0.2) rotate(-20deg); opacity: 0; }
+      100% { transform: translate(-50%, -50%) scale(1) rotate(var(--rot, 0deg)); opacity: 1; }
+    }
+
+    .layer-counter {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      font-weight: 600;
+    }
+
+    .selected-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      max-height: 92px;
+      overflow-y: auto;
+      margin-bottom: 18px;
+      padding: 4px;
+    }
+
+    .pill {
+      background: var(--pink-50);
+      border: 1px solid var(--pink-200);
+      color: var(--text-dark);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: 0.18s;
+    }
+    .pill:hover {
+      background: var(--pink-200);
+    }
+
+    .preview-controls {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .finish-btn {
+      width: 100%;
+      justify-content: center;
+      padding: 15px 24px;
+      font-size: 16px;
+      margin-top: 12px;
+    }
+
+    /* Աջ վահանակ՝ Հացերի և 100 միջուկների ընտրություն */
+    .builder-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(16px);
+      border: 2px solid #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-title span.badge {
+      font-size: 12px;
+      background: var(--pink-100);
+      color: var(--pink-600);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    /* Հացերի ցանց */
+    .bread-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .bread-item {
+      background: var(--bg-main);
+      border: 2px solid transparent;
+      border-radius: var(--radius-md);
+      padding: 12px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .bread-item:hover {
+      transform: translateY(-3px);
+      background: #ffffff;
+      box-shadow: var(--shadow-card);
+    }
+
+    .bread-item.active {
+      background: #ffffff;
+      border-color: var(--pink-500);
+      box-shadow: 0 8px 20px rgba(255, 46, 130, 0.16);
+    }
+
+    .bread-thumb {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 6px;
+    }
+
+    .bread-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1.25;
+    }
+
+    /* Որոնում և Կատեգորիաներ */
+    .toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 18px 12px 42px;
+      border-radius: 999px;
+      border: 2px solid var(--pink-100);
+      background: var(--bg-main);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text-dark);
+      outline: none;
+      transition: 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--pink-400);
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(255, 92, 157, 0.12);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--pink-400);
+      font-size: 16px;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      border: 1.5px solid var(--pink-100);
+      background: #ffffff;
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--pink-300);
+      color: var(--text-dark);
+    }
+
+    .tab-btn.active {
+      background: var(--pink-500);
+      border-color: var(--pink-500);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(255, 46, 130, 0.25);
+    }
+
+    /* 100 Միջուկների ցանց */
+    .toppings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+      gap: 10px;
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .toppings-grid::-webkit-scrollbar {
+      width: 6px;
+    }
+    .toppings-grid::-webkit-scrollbar-thumb {
+      background: var(--pink-200);
+      border-radius: 999px;
+    }
+
+    .topping-card {
+      background: var(--bg-main);
+      border: 1.5px solid transparent;
+      border-radius: var(--radius-md);
+      padding: 12px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+      user-select: none;
+    }
+
+    .topping-card:hover {
+      background: #ffffff;
+      border-color: var(--pink-300);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-card);
+    }
+
+    .topping-card:active {
+      transform: scale(0.95);
+    }
+
+    .topping-count-badge {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      background: var(--pink-500);
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 8px rgba(255, 46, 130, 0.3);
+    }
+
+    .topping-svg-box {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .topping-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1.25;
+    }
+
+    /* Ավարտի տոնական պատուհան (Modal) */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(59, 29, 42, 0.45);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border-radius: 32px;
+      max-width: 460px;
+      width: 100%;
+      padding: 34px 28px;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(224, 27, 108, 0.25);
+      border: 3px solid var(--pink-100);
+      position: relative;
+      animation: modalPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .stars-row {
+      font-size: 28px;
+      margin-bottom: 10px;
+      letter-spacing: 4px;
+    }
+
+    .modal-box h2 {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--pink-600);
+      margin-bottom: 10px;
+    }
+
+    .modal-box p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-dark);
+      margin-bottom: 18px;
+    }
+
+    .recipe-summary {
+      background: var(--pink-50);
+      border-radius: 18px;
+      padding: 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 200;
+      animation: fall 2.4s ease-out forwards;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+
+  <header>
+    <div class="brand">
+      <div class="brand-icon">🍞</div>
+      <div>
+        <h1>Toast Studio</h1>
+        <span>Ստեղծիր քո երազանքի համեղ տոստը</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="randomToast()">🎲 Պատահական տոստ</button>
+      <button class="btn btn-ghost" onclick="clearToast()">🧹 Մաքրել</button>
+    </div>
+  </header>
+
+  <main class="studio-layout">
+    <!-- Ձախ հատված՝ Ափսե -->
+    <section class="preview-card">
+      <div class="chef-badge" id="chef-comment">✨ Ընտրիր հացը և ավելացրու միջուկներ</div>
+
+      <div class="plate-stage">
+        <div class="plate">
+          <div class="plate-inner-ring"></div>
+        </div>
+        <div id="toast-canvas"></div>
+      </div>
+
+      <div class="layer-counter" id="layer-count">Ընտրված է 0 միջուկ</div>
+      <div class="selected-pills" id="selected-pills"></div>
+
+      <div class="preview-controls">
+        <button class="btn btn-ghost" onclick="undoTopping()">↩️ Հետ քայլ</button>
+        <button class="btn btn-ghost" onclick="clearToast()">🗑️ Սկսել նորից</button>
+      </div>
+
+      <button class="btn btn-primary finish-btn" onclick="finishToast()">
+        💖 Պատրաստ է — Համտեսել
+      </button>
+    </section>
+
+    <!-- Աջ հատված՝ Հացեր և 100 միջուկ -->
+    <section class="builder-card">
+      <div class="section-title">
+        <span>1. Ընտրիր հացի տեսակը</span>
+        <span class="badge">8 տեսակ</span>
+      </div>
+      <div class="bread-grid" id="bread-grid"></div>
+
+      <div class="section-title">
+        <span>2. Ավելացրու միջուկներ</span>
+        <span class="badge">100 միջուկ</span>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Որոնել միջուկ (օր.՝ ավոկադո, պանիր, երշիկ, նուտելլա)..." oninput="renderToppings()" />
+        </div>
+        <div class="tabs" id="category-tabs"></div>
+      </div>
+
+      <div class="toppings-grid" id="toppings-grid"></div>
+    </section>
+  </main>
+
+  <!-- Ավարտի պատուհան -->
+  <div class="modal-backdrop" id="result-modal">
+    <div class="modal-box">
+      <div class="stars-row">⭐⭐⭐⭐⭐</div>
+      <h2>Սա ուղղակի շա՜տ համեղ է 💖</h2>
+      <p id="result-message"></p>
+      <div class="recipe-summary" id="recipe-summary"></div>
+      <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="closeModal()">
+        ✨ Պատրաստել ևս մեկը
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // 8 տեսակի հարթ SVG հացեր
+    const BREADS = [
+      { id: 'brioche', name: 'Դասական բրիոշ', crust: '#d9823b', crumb: '#fff1d0', blush: '#f7c588' },
+      { id: 'strawberry', name: 'Ելակի վարդագույն', crust: '#e85d92', crumb: '#ffe3ee', blush: '#ffb8d4' },
+      { id: 'wholegrain', name: 'Հացահատիկային', crust: '#8c5327', crumb: '#d6a472', seeds: true },
+      { id: 'milk', name: 'Նուրբ կաթնային', crust: '#e3a869', crumb: '#fffdf7', blush: '#fae6c8' },
+      { id: 'choco', name: 'Շոկոլադե բրիոշ', crust: '#4a2518', crumb: '#7a4430', blush: '#945842' },
+      { id: 'matcha', name: 'Կանաչ մատչա', crust: '#658c42', crumb: '#d8edbe', blush: '#b5d68d' },
+      { id: 'heart', name: 'Սրտաձև տոստ', crust: '#e05388', crumb: '#ffd6e6', shape: 'heart' },
+      { id: 'croissant', name: 'Խրթխրթան կրուասան', crust: '#d47b2c', crumb: '#ffcf7d', shape: 'croissant' }
+    ];
+
+    function getBreadSVG(b) {
+      if (b.shape === 'heart') {
+        return `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <path d="M100 178 C35 130 14 88 14 58 C14 32 35 15 60 15 C78 15 92 25 100 38 C108 25 122 15 140 15 C165 15 186 32 186 58 C186 88 165 130 100 178 Z" fill="${b.crust}"/>
+          <path d="M100 166 C44 123 26 86 26 60 C26 40 42 26 62 26 C78 26 91 36 100 49 C109 36 122 26 138 26 C158 26 174 40 174 60 C174 86 156 123 100 166 Z" fill="${b.crumb}"/>
+        </svg>`;
+      }
+      if (b.shape === 'croissant') {
+        return `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <ellipse cx="100" cy="105" rx="84" ry="52" fill="${b.crust}"/>
+          <ellipse cx="100" cy="103" rx="74" ry="42" fill="${b.crumb}"/>
+          <path d="M55 68 Q75 105 55 142 M100 61 Q115 105 100 148 M145 68 Q130 105 145 142" stroke="${b.crust}" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </svg>`;
+      }
+      return `<svg viewBox="0 0 200 200" width="100%" height="100%">
+        <path d="M36 74 C22 74 16 62 16 48 C16 26 45 16 100 16 C155 16 184 26 184 48 C184 62 178 74 164 74 L164 166 C164 177 155 184 144 184 L56 184 C45 184 36 177 36 166 Z" fill="${b.crust}"/>
+        <path d="M46 72 C34 72 28 62 28 50 C28 34 52 26 100 26 C148 26 172 34 172 50 C172 62 166 72 154 72 L154 162 C154 170 148 174 140 174 L60 174 C52 174 46 170 46 162 Z" fill="${b.crumb}"/>
+        ${b.seeds ? `<g fill="#6b3e1b" opacity="0.65"><circle cx="70" cy="60" r="3"/><circle cx="125" cy="55" r="3"/><circle cx="95" cy="95" r="3"/><circle cx="65" cy="130" r="3"/><circle cx="130" cy="135" r="3"/><circle cx="105" cy="150" r="3"/></g>` : ''}
+      </svg>`;
+    }
+
+    // 100 միջուկների կատեգորիաներ և տվյալներ
+    const CATEGORIES = [
+      { id: 'all', label: '✨ Բոլորը (100)' },
+      { id: 'veggies', label: '🥑 Բանջարեղեն (20)' },
+      { id: 'cheese', label: '🧀 Պանիրներ (15)' },
+      { id: 'meat', label: '🥓 Երշիկ և Միս (20)' },
+      { id: 'sauces', label: '🥫 Սոուսներ (15)' },
+      { id: 'fruits', label: '🍓 Մրգեր (15)' },
+      { id: 'sweets', label: '🎀 Քաղցրավենիք (15)' }
+    ];
+
+    const TOPPINGS = [
+      // 1. ԲԱՆՋԱՐԵՂԵՆ ԵՎ ԿԱՆԱՉԵՂԵՆ (20)
+      { id: 'v1', cat: 'veggies', name: 'Ավոկադոյի շերտեր', type: 'avocado', c1: '#5a9e38', c2: '#b8e36b', c3: '#7a4928' },
+      { id: 'v2', cat: 'veggies', name: 'Գուակամոլե մածուկ', type: 'blob', c1: '#8cd459', c2: '#6ab339' },
+      { id: 'v3', cat: 'veggies', name: 'Հասած լոլիկ', type: 'slice_ring', c1: '#ff3b4e', c2: '#ff8591' },
+      { id: 'v4', cat: 'veggies', name: 'Չերի լոլիկներ', type: 'berries', c1: '#ff2e43', c2: '#ff7a88' },
+      { id: 'v5', cat: 'veggies', name: 'Թարմ վարունգ', type: 'slice_ring', c1: '#3ca352', c2: '#c5f2b6' },
+      { id: 'v6', cat: 'veggies', name: 'Թթու վարունգ', type: 'slice_ring', c1: '#658532', c2: '#b7cf74' },
+      { id: 'v7', cat: 'veggies', name: 'Խրթխրթան հազար', type: 'leaf', c1: '#70cf57', c2: '#a8eb8f' },
+      { id: 'v8', cat: 'veggies', name: 'Թարմ ռուկոլա', type: 'leaf', c1: '#3b873e', c2: '#5cb35f' },
+      { id: 'v9', cat: 'veggies', name: 'Մանկական սպանախ', type: 'leaf', c1: '#2e6e35', c2: '#4b9e54' },
+      { id: 'v10', cat: 'veggies', name: 'Կարմիր սոխի օղակ', type: 'onion', c1: '#9c2c6d', c2: '#e396c3' },
+      { id: 'v11', cat: 'veggies', name: 'Կանաչ սոխ', type: 'sprinkles', c1: '#48a842', c2: '#8ce082' },
+      { id: 'v12', cat: 'veggies', name: 'Կարմիր պղպեղ', type: 'ring', c1: '#f0293a', c2: '#ff7581' },
+      { id: 'v13', cat: 'veggies', name: 'Դեղին պղպեղ', type: 'ring', c1: '#ffc414', c2: '#ffe47a' },
+      { id: 'v14', cat: 'veggies', name: 'Կծու հալապենյո', type: 'slice_ring', c1: '#2d7a36', c2: '#98db8c' },
+      { id: 'v15', cat: 'veggies', name: 'Սև ձիթապտուղ', type: 'olives', c1: '#29252c', c2: '#57505c' },
+      { id: 'v16', cat: 'veggies', name: 'Կանաչ ձիթապտուղ', type: 'olives', c1: '#8aa832', c2: '#d9483b' },
+      { id: 'v17', cat: 'veggies', name: 'Տապակած սունկ', type: 'mushroom', c1: '#b58d6b', c2: '#ebd5c3' },
+      { id: 'v18', cat: 'veggies', name: 'Քաղցր եգիպտացորեն', type: 'berries', c1: '#ffd026', c2: '#fff099' },
+      { id: 'v19', cat: 'veggies', name: 'Վարդագույն բողկ', type: 'slice_ring', c1: '#eb3b76', c2: '#ffffff' },
+      { id: 'v20', cat: 'veggies', name: 'Թարմ ռեհան', type: 'leaf', c1: '#2b8a44', c2: '#63c77d' },
+
+      // 2. ՊԱՆԻՐՆԵՐ (15)
+      { id: 'c1', cat: 'cheese', name: 'Ֆիլադելֆիա կրեմ', type: 'blob', c1: '#ffffff', c2: '#f2edf0' },
+      { id: 'c2', cat: 'cheese', name: 'Չեդեր պանիր', type: 'square', c1: '#ffaa1d', c2: '#ffd269' },
+      { id: 'c3', cat: 'cheese', name: 'Մոցարելա գնդիկ', type: 'mozzarella', c1: '#fffdf7', c2: '#f5efe1' },
+      { id: 'c4', cat: 'cheese', name: 'Նուրբ բուրատա', type: 'mozzarella', c1: '#ffffff', c2: '#ffeef5' },
+      { id: 'c5', cat: 'cheese', name: 'Քերած պարմեզան', type: 'sprinkles', c1: '#ffe79e', c2: '#fff5d1' },
+      { id: 'c6', cat: 'cheese', name: 'Գաուդա պանիր', type: 'triangle', c1: '#ffd23f', c2: '#e6a817' },
+      { id: 'c7', cat: 'cheese', name: 'Դորբլյու պանիր', type: 'triangle', c1: '#f0f4f7', c2: '#4d7999' },
+      { id: 'c8', cat: 'cheese', name: 'Ֆրանսիական բրի', type: 'triangle', c1: '#fff8e3', c2: '#e8d7b0' },
+      { id: 'c9', cat: 'cheese', name: 'Ֆետա խորանարդիկ', type: 'cubes', c1: '#ffffff', c2: '#e8eef2' },
+      { id: 'c10', cat: 'cheese', name: 'Սուլուգունի', type: 'slice_round', c1: '#fff4cc', c2: '#f2dfa0' },
+      { id: 'c11', cat: 'cheese', name: 'Հայկական լոռի', type: 'cubes', c1: '#fcf9eb', c2: '#e6dec3' },
+      { id: 'c12', cat: 'cheese', name: 'Նուրբ ռիկոտա', type: 'blob', c1: '#fffcfa', c2: '#f5ebe4' },
+      { id: 'c13', cat: 'cheese', name: 'Հալած սերուցքային', type: 'square', c1: '#ffe680', c2: '#fff2b8' },
+      { id: 'c14', cat: 'cheese', name: 'Այծի պանիր', type: 'slice_round', c1: '#ffffff', c2: '#e3dce0' },
+      { id: 'c15', cat: 'cheese', name: 'Պանրի ձողիկներ', type: 'sticks', c1: '#ffbe2e', c2: '#ffe18c' },
+
+      // 3. ԵՐՇԻԿՆԵՐ, ՄԻՍ, ՁՈՒ ԵՎ ԾՈՎԱՄԹԵՐՔ (20)
+      { id: 'm1', cat: 'meat', name: 'Բժշկական երշիկ', type: 'slice_round', c1: '#ff9eb5', c2: '#ffc4d2' },
+      { id: 'm2', cat: 'meat', name: 'Կծու պեպերոնի', type: 'salami', c1: '#d62828', c2: '#ff8a8a' },
+      { id: 'm3', cat: 'meat', name: 'Իտալական սալյամի', type: 'salami', c1: '#a8202b', c2: '#f2b8bd' },
+      { id: 'm4', cat: 'meat', name: 'Նուրբ խոզապուխտ', type: 'slice_round', c1: '#f5849b', c2: '#fab4c2' },
+      { id: 'm5', cat: 'meat', name: 'Խրթխրթան բեկոն', type: 'bacon', c1: '#c93838', c2: '#ffd4c9' },
+      { id: 'm6', cat: 'meat', name: 'Պրոշուտո', type: 'bacon', c1: '#d95b66', c2: '#ffd9dc' },
+      { id: 'm7', cat: 'meat', name: 'Հավի կրծքամիս', type: 'slice_round', c1: '#f5d5b8', c2: '#d9a477' },
+      { id: 'm8', cat: 'meat', name: 'Խրթխրթան նագեթս', type: 'nuggets', c1: '#eb9d38', c2: '#ffd082' },
+      { id: 'm9', cat: 'meat', name: 'Հնդկահավի ֆիլե', type: 'slice_round', c1: '#f7c8b7', c2: '#fae0d7' },
+      { id: 'm10', cat: 'meat', name: 'Հյութեղ ռոստբիֆ', type: 'slice_round', c1: '#8c2d34', c2: '#c95b63' },
+      { id: 'm11', cat: 'meat', name: 'Նրբերշիկի շերտեր', type: 'berries', c1: '#f27983', c2: '#ffb8be' },
+      { id: 'm12', cat: 'meat', name: 'Հայկական բաստուրմա', type: 'salami', c1: '#8f1d24', c2: '#4a1216' },
+      { id: 'm13', cat: 'meat', name: 'Համեմված սուջուխ', type: 'salami', c1: '#6e191e', c2: '#d6989c' },
+      { id: 'm14', cat: 'meat', name: 'Թույլ աղի սաղմոն', type: 'bacon', c1: '#ff7b59', c2: '#ffc4b5' },
+      { id: 'm15', cat: 'meat', name: 'Թունա ձուկ', type: 'blob', c1: '#e89ba3', c2: '#f7c8cd' },
+      { id: 'm16', cat: 'meat', name: 'Թագավորական ծովախեցգետին', type: 'shrimp', c1: '#ff7a59', c2: '#ffd1c4' },
+      { id: 'm17', cat: 'meat', name: 'Կարմիր խավիար', type: 'berries', c1: '#ff4d1c', c2: '#ff9c7a' },
+      { id: 'm18', cat: 'meat', name: 'Աչքաձվածեղ', type: 'egg_fried', c1: '#ffffff', c2: '#ffb703' },
+      { id: 'm19', cat: 'meat', name: 'Պաշոտ ձու', type: 'mozzarella', c1: '#ffffff', c2: '#ffd166' },
+      { id: 'm20', cat: 'meat', name: 'Խաշած ձվի շերտ', type: 'egg_boiled', c1: '#ffffff', c2: '#ffd026' },
+
+      // 4. ՍՈՈՒՍՆԵՐ ԵՎ ՄԱԾՈՒԿՆԵՐ (15)
+      { id: 's1', cat: 'sauces', name: 'Նուրբ մայոնեզ', type: 'zigzag', c1: '#fffdf5', c2: '#f5eedc' },
+      { id: 's2', cat: 'sauces', name: 'Լոլիկի կետչուպ', type: 'zigzag', c1: '#e62229', c2: '#ff6b70' },
+      { id: 's3', cat: 'sauces', name: 'Դիժոնի մանանեխ', type: 'zigzag', c1: '#e8b323', c2: '#ffe07d' },
+      { id: 's4', cat: 'sauces', name: 'Կանաչ պեստո', type: 'blob', c1: '#499c38', c2: '#82d46e' },
+      { id: 's5', cat: 'sauces', name: 'Պանրային սոուս', type: 'zigzag', c1: '#ffba19', c2: '#ffe28a' },
+      { id: 's6', cat: 'sauces', name: 'Բարբեքյու սոուս', type: 'zigzag', c1: '#591d16', c2: '#963b30' },
+      { id: 's7', cat: 'sauces', name: 'Սխտորի սոուս', type: 'blob', c1: '#faf8f2', c2: '#e6e1d3' },
+      { id: 's8', cat: 'sauces', name: 'Քաղցր չիլի սոուս', type: 'zigzag', c1: '#ff4229', c2: '#ff9680' },
+      { id: 's9', cat: 'sauces', name: 'Կծու սրիրաչա', type: 'zigzag', c1: '#d91c1c', c2: '#ff5959' },
+      { id: 's10', cat: 'sauces', name: 'Տերիյակի սոուս', type: 'zigzag', c1: '#3d1911', c2: '#753627' },
+      { id: 's11', cat: 'sauces', name: 'Բալզամիկ կրեմ', type: 'zigzag', c1: '#2e1018', c2: '#6b293b' },
+      { id: 's12', cat: 'sauces', name: 'Հումուս մածուկ', type: 'blob', c1: '#e6c895', c2: '#f5e1be' },
+      { id: 's13', cat: 'sauces', name: 'Սերուցքային կարագ', type: 'square', c1: '#fff099', c2: '#fff9cc' },
+      { id: 's14', cat: 'sauces', name: 'Թթվասեր', type: 'blob', c1: '#ffffff', c2: '#f0f4f7' },
+      { id: 's15', cat: 'sauces', name: 'Ռանչ սոուս', type: 'zigzag', c1: '#f7faf5', c2: '#d5e6cf' },
+
+      // 5. ՄՐԳԵՐ ԵՎ ՀԱՏԱՊՏՈՒՂՆԵՐ (15)
+      { id: 'f1', cat: 'fruits', name: 'Քաղցր ելակ', type: 'strawberry', c1: '#ff2e63', c2: '#49a842' },
+      { id: 'f2', cat: 'fruits', name: 'Բանանի շերտեր', type: 'slice_round', c1: '#ffe66d', c2: '#fff7c2' },
+      { id: 'f3', cat: 'fruits', name: 'Թարմ հապալաս', type: 'berries', c1: '#3b4d9b', c2: '#788ce0' },
+      { id: 'f4', cat: 'fruits', name: 'Վարդագույն ազնվամորի', type: 'berries', c1: '#ff3377', c2: '#ff8cb3' },
+      { id: 'f5', cat: 'fruits', name: 'Կանաչ կիվի', type: 'kiwi', c1: '#7bc943', c2: '#d9f7be' },
+      { id: 'f6', cat: 'fruits', name: 'Արևադարձային մանգո', type: 'cubes', c1: '#ffb703', c2: '#ffe066' },
+      { id: 'f7', cat: 'fruits', name: 'Հյութեղ դեղձ', type: 'slice_round', c1: '#ff9659', c2: '#ffd1b3' },
+      { id: 'f8', cat: 'fruits', name: 'Քաղցր բալ', type: 'berries', c1: '#b8143a', c2: '#ff5c82' },
+      { id: 'f9', cat: 'fruits', name: 'Թարմ թուզ', type: 'fig', c1: '#7a2e63', c2: '#ff7aa8' },
+      { id: 'f10', cat: 'fruits', name: 'Հյութեղ արքայախնձոր', type: 'triangle', c1: '#ffd426', c2: '#fff099' },
+      { id: 'f11', cat: 'fruits', name: 'Կարմիր խնձոր', type: 'slice_round', c1: '#eb2f42', c2: '#fff7e6' },
+      { id: 'f12', cat: 'fruits', name: 'Նարնջի շերտ', type: 'kiwi', c1: '#ff8811', c2: '#ffd29e' },
+      { id: 'f13', cat: 'fruits', name: 'Սև մոշ', type: 'berries', c1: '#2b1c36', c2: '#5f4375' },
+      { id: 'f14', cat: 'fruits', name: 'Նռան հատիկներ', type: 'berries', c1: '#d9163a', c2: '#ff6682' },
+      { id: 'f15', cat: 'fruits', name: 'Կարամելացված տանձ', type: 'slice_round', c1: '#d9a441', c2: '#fae4b4' },
+
+      // 6. ՔԱՂՑՐԱՎԵՆԻՔ ԵՎ ԴԵԿՈՐ (15)
+      { id: 'w1', cat: 'sweets', name: 'Նուտելլա շոկոլադ', type: 'blob', c1: '#4d2618', c2: '#7a412c' },
+      { id: 'w2', cat: 'sweets', name: 'Սպիտակ շոկոլադ', type: 'blob', c1: '#fff9eb', c2: '#f2e4c7' },
+      { id: 'w3', cat: 'sweets', name: 'Գետնանուշի կարագ', type: 'blob', c1: '#c98038', c2: '#e8a866' },
+      { id: 'w4', cat: 'sweets', name: 'Ելակի վարդագույն ջեմ', type: 'blob', c1: '#ff3b7f', c2: '#ff8cb5' },
+      { id: 'w5', cat: 'sweets', name: 'Հարած սերուցք', type: 'whipped', c1: '#ffffff', c2: '#ffe6f0' },
+      { id: 'w6', cat: 'sweets', name: 'Ոսկեգույն մեղր', type: 'zigzag', c1: '#ffb300', c2: '#ffe175' },
+      { id: 'w7', cat: 'sweets', name: 'Աղի կարամել', type: 'zigzag', c1: '#cc701d', c2: '#f5a65b' },
+      { id: 'w8', cat: 'sweets', name: 'Մինի մարշմելոու', type: 'cubes', c1: '#ffffff', c2: '#ffcce0' },
+      { id: 'w9', cat: 'sweets', name: 'Վարդագույն մակարոն', type: 'macaron', c1: '#ff70a6', c2: '#ffd6e6' },
+      { id: 'w10', cat: 'sweets', name: 'Օրեո թխվածքաբլիթ', type: 'oreo', c1: '#2b2426', c2: '#ffffff' },
+      { id: 'w11', cat: 'sweets', name: 'Վանիլային պաղպաղակ', type: 'mozzarella', c1: '#fff7e0', c2: '#ffe4a3' },
+      { id: 'w12', cat: 'sweets', name: 'Գունավոր շաքարահատիկ', type: 'sprinkles', c1: '#ff4791', c2: '#47d1ff' },
+      { id: 'w13', cat: 'sweets', name: 'Սրտաձև շոկոլադ', type: 'heart', c1: '#ff2e82', c2: '#ff85b6' },
+      { id: 'w14', cat: 'sweets', name: 'Կոկոսի փաթիլներ', type: 'sprinkles', c1: '#ffffff', c2: '#e8f4f8' },
+      { id: 'w15', cat: 'sweets', name: 'Շաքարե վարդագույն բանտիկ', type: 'bow', c1: '#ff3b8d', c2: '#ff9ec7' }
+    ];
+
+    // Հարթ վեկտորային SVG գեներատոր յուրաքանչյուր միջուկի համար
+    function getToppingSVG(t) {
+      switch (t.type) {
+        case 'avocado':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <path d="M50 12 C28 12 20 45 20 66 C20 84 34 92 50 92 C66 92 80 84 80 66 C80 45 72 12 50 12 Z" fill="${t.c1}"/>
+            <path d="M50 18 C33 18 26 46 26 65 C26 79 37 86 50 86 C63 86 74 79 74 65 C74 46 67 18 50 18 Z" fill="${t.c2}"/>
+            <circle cx="50" cy="64" r="14" fill="${t.c3}"/>
+          </svg>`;
+        case 'blob':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <path d="M26 42 C18 28 38 14 54 22 C70 14 88 28 80 44 C92 58 80 82 62 78 C48 88 24 82 22 64 C12 56 16 44 26 42 Z" fill="${t.c1}"/>
+            <circle cx="42" cy="40" r="8" fill="${t.c2}" opacity="0.45"/>
+          </svg>`;
+        case 'slice_ring':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <circle cx="50" cy="50" r="38" fill="${t.c1}"/>
+            <circle cx="50" cy="50" r="28" fill="${t.c2}"/>
+            <circle cx="50" cy="50" r="10" fill="${t.c1}" opacity="0.6"/>
+          </svg>`;
+        case 'berries':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <circle cx="36" cy="40" r="16" fill="${t.c1}"/><circle cx="32" cy="35" r="4" fill="${t.c2}"/>
+            <circle cx="66" cy="44" r="15" fill="${t.c1}"/><circle cx="62" cy="39" r="4" fill="${t.c2}"/>
+            <circle cx="50" cy="68" r="16" fill="${t.c1}"/><circle cx="46" cy="63" r="4" fill="${t.c2}"/>
+          </svg>`;
+        case 'leaf':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <path d="M20 75 C20 35 55 18 82 20 C80 52 62 82 20 75 Z" fill="${t.c1}"/>
+            <path d="M24 72 Q52 48 76 26" stroke="${t.c2}" stroke-width="4" fill="none" stroke-linecap="round"/>
+          </svg>`;
+        case 'onion':
+        case 'ring':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <circle cx="50" cy="50" r="34" fill="none" stroke="${t.c1}" stroke-width="10"/>
+            <circle cx="50" cy="50" r="22" fill="none" stroke="${t.c2}" stroke-width="5"/>
+          </svg>`;
+        case 'sprinkles':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <rect x="24" y="28" width="16" height="7" rx="3.5" transform="rotate(25 24 28)" fill="${t.c1}"/>
+            <rect x="58" y="24" width="16" height="7" rx="3.5" transform="rotate(-20 58 24)" fill="${t.c2}"/>
+            <rect x="42" y="48" width="18" height="7" rx="3.5" transform="rotate(12 42 48)" fill="${t.c1}"/>
+            <rect x="26" y="66" width="16" height="7" rx="3.5" transform="rotate(-35 26 66)" fill="${t.c2}"/>
+            <rect x="60" y="64" width="16" height="7" rx="3.5" transform="rotate(30 60 64)" fill="${t.c1}"/>
+          </svg>`;
+        case 'olives':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <circle cx="38" cy="42" r="16" fill="${t.c1}"/><circle cx="38" cy="42" r="6" fill="${t.c2}"/>
+            <circle cx="64" cy="62" r="16" fill="${t.c1}"/><circle cx="64" cy="62" r="6" fill="${t.c2}"/>
+          </svg>`;
+        case 'mushroom':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <path d="M22 52 C22 26 78 26 78 52 C78 58 68 60 60 58 L60 78 C60 83 40 83 40 78 L40 58 C32 60 22 58 22 52 Z" fill="${t.c1}"/>
+            <path d="M30 50 C30 34 70 34 70 50 Z" fill="${t.c2}" opacity="0.5"/>
+          </svg>`;
+        case 'square':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <rect x="18" y="18" width="64" height="64" rx="12" fill="${t.c1}"/>
+            <rect x="24" y="24" width="52" height="52" rx="8" fill="${t.c2}" opacity="0.4"/>
+          </svg>`;
+        case 'mozzarella':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <circle cx="50" cy="52" r="34" fill="${t.c1}"/>
+            <ellipse cx="40" cy="38" rx="12" ry="7" fill="${t.c2}"/>
+          </svg>`;
+        case 'triangle':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <polygon points="50,16 86,80 14,80" fill="${t.c1}" stroke="${t.c2}" stroke-width="4" stroke-linejoin="round"/>
+            <circle cx="50" cy="56" r="5" fill="${t.c2}"/>
+            <circle cx="38" cy="70" r="4" fill="${t.c2}"/>
+          </svg>`;
+        case 'cubes':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <rect x="22" y="24" width="24" height="24" rx="6" fill="${t.c1}" stroke="${t.c2}" stroke-width="2"/>
+            <rect x="54" y="28" width="24" height="24" rx="6" fill="${t.c1}" stroke="${t.c2}" stroke-width="2"/>
+            <rect x="36" y="54" width="26" height="26" rx="6" fill="${t.c1}" stroke="${t.c2}" stroke-width="2"/>
+          </svg>`;
+        case 'sticks':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <rect x="20" y="28" width="60" height="12" rx="6" transform="rotate(-12 20 28)" fill="${t.c1}"/>
+            <rect x="20" y="56" width="60" height="12" rx="6" transform="rotate(10 20 56)" fill="${t.c2}"/>
+          </svg>`;
+        case 'slice_round':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <circle cx="50" cy="50" r="36" fill="${t.c1}"/>
+            <circle cx="50" cy="50" r="30" fill="${t.c2}" opacity="0.45"/>
+          </svg>`;
+        case 'salami':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <circle cx="50" cy="50" r="36" fill="${t.c1}"/>
+            <circle cx="38" cy="38" r="4" fill="${t.c2}"/><circle cx="62" cy="40" r="3.5" fill="${t.c2}"/>
+            <circle cx="48" cy="56" r="4.5" fill="${t.c2}"/><circle cx="64" cy="62" r="3.5" fill="${t.c2}"/>
+            <circle cx="34" cy="62" r="3.5" fill="${t.c2}"/>
+          </svg>`;
+        case 'bacon':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <path d="M16 34 Q36 20 52 34 T86 34 L86 64 Q66 78 50 64 T16 64 Z" fill="${t.c1}"/>
+            <path d="M16 46 Q36 32 52 46 T86 46" stroke="${t.c2}" stroke-width="6" fill="none"/>
+          </svg>`;
+        case 'nuggets':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <rect x="22" y="24" width="32" height="24" rx="12" fill="${t.c1}"/>
+            <rect x="46" y="48" width="34" height="26" rx="13" fill="${t.c2}"/>
+          </svg>`;
+        case 'shrimp':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <path d="M68 28 C40 18 22 42 30 66 C36 80 56 80 62 68 C50 68 44 56 48 46 C52 38 64 38 72 44 Z" fill="${t.c1}"/>
+            <circle cx="66" cy="34" r="3" fill="#2b1d24"/>
+          </svg>`;
+        case 'egg_fried':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <path d="M24 44 C18 28 38 16 56 22 C74 16 86 34 78 52 C86 70 68 86 50 80 C30 86 16 68 24 44 Z" fill="${t.c1}"/>
+            <circle cx="52" cy="50" r="16" fill="${t.c2}"/>
+            <circle cx="47" cy="45" r="4" fill="#fff7cc"/>
+          </svg>`;
+        case 'egg_boiled':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <ellipse cx="50" cy="50" rx="30" ry="38" fill="${t.c1}"/>
+            <circle cx="50" cy="54" r="16" fill="${t.c2}"/>
+          </svg>`;
+        case 'zigzag':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <path d="M20 32 Q50 18 80 32 T20 52 T80 72" stroke="${t.c1}" stroke-width="10" fill="none" stroke-linecap="round"/>
+          </svg>`;
+        case 'strawberry':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <path d="M50 86 C26 68 22 36 38 28 C46 24 54 24 62 28 C78 36 74 68 50 86 Z" fill="${t.c1}"/>
+            <path d="M32 28 Q50 38 68 28 Q58 16 50 22 Q42 16 32 28 Z" fill="${t.c2}"/>
+            <circle cx="44" cy="48" r="2" fill="#ffe680"/><circle cx="56" cy="48" r="2" fill="#ffe680"/><circle cx="50" cy="64" r="2" fill="#ffe680"/>
+          </svg>`;
+        case 'kiwi':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <circle cx="50" cy="50" r="36" fill="${t.c1}"/>
+            <circle cx="50" cy="50" r="15" fill="${t.c2}"/>
+          </svg>`;
+        case 'fig':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <path d="M50 16 C64 32 78 46 78 64 C78 80 65 88 50 88 C35 88 22 80 22 64 C22 46 36 32 50 16 Z" fill="${t.c1}"/>
+            <circle cx="50" cy="62" r="18" fill="${t.c2}"/>
+          </svg>`;
+        case 'whipped':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <path d="M24 72 C18 58 32 50 32 50 C26 38 40 30 46 30 C46 20 56 16 56 26 C66 28 72 40 68 50 C78 54 82 68 74 74 Z" fill="${t.c1}" stroke="${t.c2}" stroke-width="3"/>
+          </svg>`;
+        case 'macaron':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <rect x="20" y="30" width="60" height="16" rx="8" fill="${t.c1}"/>
+            <rect x="22" y="46" width="56" height="8" rx="4" fill="${t.c2}"/>
+            <rect x="20" y="54" width="60" height="16" rx="8" fill="${t.c1}"/>
+          </svg>`;
+        case 'oreo':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <circle cx="50" cy="50" r="34" fill="${t.c1}"/>
+            <circle cx="50" cy="50" r="24" fill="none" stroke="${t.c2}" stroke-width="3" stroke-dasharray="6 4"/>
+          </svg>`;
+        case 'heart':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <path d="M50 82 C22 62 14 44 14 32 C14 20 24 14 34 14 C42 14 47 19 50 25 C53 19 58 14 66 14 C76 14 86 20 86 32 C86 44 78 62 50 82 Z" fill="${t.c1}"/>
+          </svg>`;
+        case 'bow':
+          return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+            <path d="M50 50 L20 28 C14 40 14 60 20 72 Z" fill="${t.c1}"/>
+            <path d="M50 50 L80 28 C86 40 86 60 80 72 Z" fill="${t.c1}"/>
+            <circle cx="50" cy="50" r="10" fill="${t.c2}"/>
+          </svg>`;
+        default:
+          return `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="32" fill="${t.c1}"/></svg>`;
+      }
+    }
+
+    // Ծրագրի վիճակ (State)
+    let selectedBread = BREADS[1]; // Վարդագույն ելակի հաց՝ լռելյայն
+    let activeCategory = 'all';
+    let placedToppings = [];
+
+    const CHEF_PRAISES = [
+      '✨ Վա՜յ, ինչ գեղեցիկ շերտ է',
+      '💖 Այս համադրությունը հրաշալի է',
+      '🍓 Իսկական շեֆ-խոհարարի ճաշակ',
+      '🥑 Շատ ախորժելի տեսք ունի',
+      '🎀 Այս տոստը նկարելու արժանի է'
+    ];
+
+    function init() {
+      renderBreads();
+      renderTabs();
+      renderToppings();
+      renderPlate();
+    }
+
+    function renderBreads() {
+      const grid = document.getElementById('bread-grid');
+      grid.innerHTML = BREADS.map(b => `
+        <div class="bread-item ${b.id === selectedBread.id ? 'active' : ''}" onclick="selectBread('${b.id}')">
+          <div class="bread-thumb">${getBreadSVG(b)}</div>
+          <div class="bread-name">${b.name}</div>
+        </div>
+      `).join('');
+    }
+
+    function selectBread(id) {
+      selectedBread = BREADS.find(b => b.id === id);
+      renderBreads();
+      renderPlate();
+      updateChefComment(`🍞 Ընտրվեց «${selectedBread.name}»`);
+    }
+
+    function renderTabs() {
+      const tabs = document.getElementById('category-tabs');
+      tabs.innerHTML = CATEGORIES.map(c => `
+        <button class="tab-btn ${c.id === activeCategory ? 'active' : ''}" onclick="setCategory('${c.id}')">
+          ${c.label}
+        </button>
+      `).join('');
+    }
+
+    function setCategory(catId) {
+      activeCategory = catId;
+      renderTabs();
+      renderToppings();
+    }
+
+    function renderToppings() {
+      const query = document.getElementById('search-input').value.trim().toLowerCase();
+      const grid = document.getElementById('toppings-grid');
+
+      const filtered = TOPPINGS.filter(t => {
+        const matchCat = activeCategory === 'all' || t.cat === activeCategory;
+        const matchText = t.name.toLowerCase().includes(query);
+        return matchCat && matchText;
+      });
+
+      grid.innerHTML = filtered.map(t => {
+        const count = placedToppings.filter(p => p.id === t.id).length;
+        return `
+          <div class="topping-card" onclick="addTopping('${t.id}')">
+            ${count > 0 ? `<div class="topping-count-badge">${count}</div>` : ''}
+            <div class="topping-svg-box">${getToppingSVG(t)}</div>
+            <div class="topping-title">${t.name}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function addTopping(id) {
+      const item = TOPPINGS.find(t => t.id === id);
+      if (!item) return;
+
+      // Ափսեի վրա բնական և գեղեցիկ տեղադրում
+      const angle = Math.random() * Math.PI * 2;
+      const radius = Math.random() * 44;
+      const x = 50 + Math.cos(angle) * (radius / 2.2);
+      const y = 52 + Math.sin(angle) * (radius / 2.2);
+      const rot = Math.floor(Math.random() * 50 - 25);
+
+      placedToppings.push({
+        uid: Date.now() + Math.random(),
+        ...item,
+        x,
+        y,
+        rot
+      });
+
+      renderPlate();
+      renderToppings();
+      updateChefComment(CHEF_PRAISES[Math.floor(Math.random() * CHEF_PRAISES.length)]);
+    }
+
+    function removeToppingByUid(uid) {
+      placedToppings = placedToppings.filter(t => t.uid !== uid);
+      renderPlate();
+      renderToppings();
+    }
+
+    function undoTopping() {
+      if (placedToppings.length === 0) return;
+      placedToppings.pop();
+      renderPlate();
+      renderToppings();
+    }
+
+    function clearToast() {
+      placedToppings = [];
+      renderPlate();
+      renderToppings();
+      updateChefComment('✨ Սկսենք նոր տոստ պատրաստել');
+    }
+
+    function randomToast() {
+      placedToppings = [];
+      selectedBread = BREADS[Math.floor(Math.random() * BREADS.length)];
+      renderBreads();
+      const count = 4 + Math.floor(Math.random() * 4);
+      for (let i = 0; i < count; i++) {
+        const rand = TOPPINGS[Math.floor(Math.random() * TOPPINGS.length)];
+        addTopping(rand.id);
+      }
+      updateChefComment('🎲 Պատահական շեֆ-բաղադրատոմսը պատրաստ է');
+    }
+
+    function renderPlate() {
+      const canvas = document.getElementById('toast-canvas');
+      let html = `<div class="bread-layer">${getBreadSVG(selectedBread)}</div>`;
+
+      placedToppings.forEach((t, idx) => {
+        html += `
+          <div class="topping-layer" style="left:${t.x}%; top:${t.y}%; --rot:${t.rot}deg; z-index:${idx + 2};">
+            ${getToppingSVG(t)}
+          </div>
+        `;
+      });
+
+      canvas.innerHTML = html;
+
+      document.getElementById('layer-count').textContent =
+        placedToppings.length === 0
+          ? 'Դեռ միջուկ չկա՝ սեղմիր միջուկների վրա'
+          : `Ընտրված է ${placedToppings.length} միջուկ`;
+
+      const pills = document.getElementById('selected-pills');
+      pills.innerHTML = placedToppings.map(t => `
+        <span class="pill" title="Սեղմիր հեռացնելու համար" onclick="removeToppingByUid(${t.uid})">
+          ${t.name} ✕
+        </span>
+      `).join('');
+    }
+
+    function updateChefComment(text) {
+      document.getElementById('chef-comment').textContent = text;
+    }
+
+    function finishToast() {
+      const modal = document.getElementById('result-modal');
+      const msg = document.getElementById('result-message');
+      const summary = document.getElementById('recipe-summary');
+
+      if (placedToppings.length === 0) {
+        msg.textContent = `Քո ընտրած «${selectedBread.name}» հացը ինքնին շատ նուրբ ու համեղ է, բայց կարող ես մի քանի միջուկ էլ ավելացնել։`;
+        summary.textContent = `Հիմքը՝ ${selectedBread.name}`;
+      } else {
+        const uniqueNames = [...new Set(placedToppings.map(t => t.name))];
+        msg.textContent = `Վա՜յ, այս տոստը ուղղակի շա՜տ համեղ է ստացվել։ «${selectedBread.name}» հացի և քո ընտրած միջուկների համադրությունը իսկական գլուխգործոց է։`;
+        summary.innerHTML = `<strong>Քո բաղադրատոմսը.</strong> ${selectedBread.name} + ${uniqueNames.join(', ')}`;
+      }
+
+      modal.classList.add('open');
+      launchConfetti();
+    }
+
+    function closeModal() {
+      document.getElementById('result-modal').classList.remove('open');
+    }
+
+    function launchConfetti() {
+      const colors = ['#ff2e82', '#ff85b6', '#ffd166', '#8cd459', '#ff5c9d'];
+      for (let i = 0; i < 45; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti';
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.top = '-15px';
+        el.style.background = colors[Math.floor(Math.random() * colors.length)];
+        el.style.width = (7 + Math.random() * 8) + 'px';
+        el.style.height = el.style.width;
+        el.style.animationDuration = (1.6 + Math.random() * 1.4) + 's';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 3000);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
